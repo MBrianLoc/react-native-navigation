@@ -2,15 +2,20 @@ package com.reactnativenavigation.viewcontrollers.bottomtabs;
 
 import android.animation.Animator;
 import android.app.Activity;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RestrictTo;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
 import com.reactnativenavigation.options.BottomTabOptions;
 import com.reactnativenavigation.options.Options;
 import com.reactnativenavigation.react.CommandListener;
+import com.reactnativenavigation.react.events.ComponentType;
 import com.reactnativenavigation.react.events.EventEmitter;
 import com.reactnativenavigation.utils.ImageLoader;
 import com.reactnativenavigation.viewcontrollers.bottomtabs.attacher.BottomTabsAttacher;
@@ -25,14 +30,8 @@ import com.reactnativenavigation.views.bottomtabs.BottomTabsLayout;
 import java.util.Collection;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RestrictTo;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.view.ViewCompat;
-
-import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-import static com.reactnativenavigation.utils.CollectionUtils.*;
+import static com.reactnativenavigation.utils.CollectionUtils.forEach;
+import static com.reactnativenavigation.utils.CollectionUtils.map;
 import static com.reactnativenavigation.utils.ObjectUtils.perform;
 
 public class BottomTabsController extends ParentController<BottomTabsLayout> implements AHBottomNavigation.OnTabSelectedListener, TabSelector {
@@ -85,6 +84,11 @@ public class BottomTabsController extends ParentController<BottomTabsLayout> imp
         setInitialTab(resolveCurrentOptions);
         tabsAttacher.attach();
         return root;
+    }
+
+    @Override
+    public boolean canSendLifecycleEvents() {
+        return false;
     }
 
     private void setInitialTab(Options resolveCurrentOptions) {
