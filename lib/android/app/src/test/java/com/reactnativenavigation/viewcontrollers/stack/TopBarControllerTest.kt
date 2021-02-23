@@ -22,7 +22,6 @@ import com.reactnativenavigation.viewcontrollers.stack.topbar.button.ButtonContr
 import com.reactnativenavigation.views.stack.StackLayout
 import com.reactnativenavigation.views.stack.topbar.TopBar
 import org.assertj.core.api.Java6Assertions.assertThat
-import org.json.JSONObject
 import org.junit.Test
 import java.util.*
 
@@ -39,6 +38,7 @@ class TopBarControllerTest : BaseTest() {
         get() = uut.view
 
     override fun beforeEach() {
+        super.beforeEach()
         activity = newActivity()
         animator = spy(TopBarAnimator())
         uut = createTopBarController()

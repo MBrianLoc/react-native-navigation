@@ -71,6 +71,11 @@ public class ParentControllerTest extends BaseTest {
             }
 
             @Override
+            public boolean canSendLifecycleEvents() {
+                return false;
+            }
+
+            @Override
             public void sendOnNavigationButtonPressed(String buttonId) {
 
             }

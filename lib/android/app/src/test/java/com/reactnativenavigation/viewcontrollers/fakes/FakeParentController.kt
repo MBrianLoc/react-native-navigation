@@ -21,6 +21,7 @@ class FakeParentController @JvmOverloads constructor(
     init {
         child.parentController = this
     }
+
     override fun getCurrentChild(): ViewController<*> = child
 
     override fun createView() = CoordinatorLayout(activity).apply {
@@ -30,4 +31,5 @@ class FakeParentController @JvmOverloads constructor(
     override fun getChildControllers() = listOf(child)
 
     override fun sendOnNavigationButtonPressed(buttonId: String?) = child.sendOnNavigationButtonPressed(buttonId)
+    override fun canSendLifecycleEvents() = false
 }

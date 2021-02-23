@@ -19,16 +19,6 @@ public class TitleBarButtonCreatorMock extends TitleBarButtonCreator {
     @Override
     public TitleBarReactButtonView create(Activity activity, ComponentOptions component) {
         final ReactInstanceManager reactInstanceManager = mock(ReactInstanceManager.class);
-        return new TitleBarReactButtonView(activity, reactInstanceManager, component) {
-            @Override
-            public void sendComponentStart(ComponentType type) {
-
-            }
-
-            @Override
-            public void sendComponentStop(ComponentType type) {
-
-            }
-        };
+        return new TitleBarReactButtonView(activity, reactInstanceManager, component);
     }
 }
