@@ -81,6 +81,11 @@ public class ViewControllerTest extends BaseTest {
 
             @Override
             public String getCurrentComponentName() { return null; }
+
+            @Override
+            public boolean canSendLifecycleEvents() {
+                return false;
+            }
         };
         assertThat(myController.getView()).isEqualTo(otherView);
     }
@@ -155,6 +160,11 @@ public class ViewControllerTest extends BaseTest {
 
             @Override
             public String getCurrentComponentName() { return null; }
+
+            @Override
+            public boolean canSendLifecycleEvents() {
+                return false;
+            }
         };
         vc.onChildViewAdded(view, child);
         verify(yellowBoxDelegate).onChildViewAdded(view, child);
