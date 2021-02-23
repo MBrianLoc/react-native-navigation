@@ -9,18 +9,14 @@ import com.reactnativenavigation.viewcontrollers.viewcontroller.ViewController
 
 object EventEmitter {
     private var reactContext: ReactContext? = null
+
     fun init(reactContext: ReactContext?) {
         this.reactContext = reactContext
     }
 
-    fun appLaunched() {
-        emit(AppLaunched, Arguments.createMap())
-    }
+    fun appLaunched() = emit(AppLaunched, Arguments.createMap())
 
-    fun emitComponentAppearState(
-            state: String,
-            controller: ViewController<*>
-    ) {
+    fun emitComponentAppearState(state: String, controller: ViewController<*>) {
         when (state) {
             ComponentWillAppear,
             ComponentDidAppear,
@@ -35,7 +31,6 @@ object EventEmitter {
             }
         }
     }
-
 
     fun emitOnNavigationButtonPressed(id: String?, buttonId: String?) {
         val event = Arguments.createMap()
@@ -80,23 +75,19 @@ object EventEmitter {
     }
 
     private fun emit(eventName: String, data: WritableMap) {
-        if (reactContext == null) {
-            Log.e("RNN", "Could not send event $eventName. React context is null!")
-            return
-        }
-        val emitter = reactContext?.getJSModule(RCTDeviceEventEmitter::class.java)
-        emitter?.emit(eventName, data)
+        reactContext?.let {
+            it.getJSModule(RCTDeviceEventEmitter::class.java)?.emit(eventName, data)
+        } ?: Log.e("RNN", "Could not send event $eventName. React context is null!")
     }
 
+    const val ComponentWillAppear = "RNN.ComponentWillAppear"
+    const val ComponentDidAppear = "RNN.ComponentDidAppear"
+    const val ComponentDidDisappear = "RNN.ComponentDidDisappear"
     private const val AppLaunched = "RNN.AppLaunched"
     private const val CommandCompleted = "RNN.CommandCompleted"
     private const val BottomTabSelected = "RNN.BottomTabSelected"
     private const val BottomTabPressed = "RNN.BottomTabPressed"
-    const val ComponentWillAppear = "RNN.ComponentWillAppear"
-    const val ComponentDidAppear = "RNN.ComponentDidAppear"
-    const val ComponentDidDisappear = "RNN.ComponentDidDisappear"
     private const val NavigationButtonPressed = "RNN.NavigationButtonPressed"
     private const val ModalDismissed = "RNN.ModalDismissed"
     private const val ScreenPopped = "RNN.ScreenPopped"
-
 }
