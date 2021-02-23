@@ -61,7 +61,7 @@ public class NavigationReactInitializer implements ReactInstanceManager.ReactIns
 	private void emitAppLaunched(@NonNull ReactContext context) {
 	    if (!isActivityReadyForUi) return;
 		waitingForAppLaunchEvent = false;
-		new EventEmitter(context).appLaunched();
+		 EventEmitter.INSTANCE.appLaunched();
 	}
 
 	private boolean shouldCreateContext() {
