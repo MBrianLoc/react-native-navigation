@@ -2,6 +2,8 @@ package com.reactnativenavigation.viewcontrollers.stack.topbar.title;
 
 import android.app.Activity;
 
+import androidx.annotation.Nullable;
+
 import com.reactnativenavigation.options.ComponentOptions;
 import com.reactnativenavigation.options.Options;
 import com.reactnativenavigation.react.events.ComponentType;
@@ -30,16 +32,7 @@ public class TitleBarReactViewController extends ViewController<TitleBarReactVie
     @Override
     public void onViewWillAppear() {
         super.onViewWillAppear();
-        if (!isDestroyed()) {
-            runOnPreDraw(view -> view.setLayoutParams(view.getLayoutParams()));
-            getView().sendComponentStart(ComponentType.Title);
-        }
-    }
-
-    @Override
-    public void onViewDisappear() {
-        getView().sendComponentStop(ComponentType.Title);
-        super.onViewDisappear();
+        super.onViewDidAppear();
     }
 
     @Override
@@ -52,8 +45,25 @@ public class TitleBarReactViewController extends ViewController<TitleBarReactVie
 
     }
 
+    @Nullable
     @Override
+    public String getComponentId() {
+        return component == null ? null : component.componentId.get(null);
+    }
+
+    @Override
+    @Nullable
     public String getCurrentComponentName() {
-        return null;
+        return component == null ? null : component.name.get(null);
+    }
+
+    @Override
+    public ComponentType getComponentType() {
+        return ComponentType.Title;
+    }
+
+    @Override
+    public boolean canSendLifecycleEvents() {
+        return true;
     }
 }

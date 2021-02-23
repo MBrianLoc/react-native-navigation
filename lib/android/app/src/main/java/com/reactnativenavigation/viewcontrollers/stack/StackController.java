@@ -9,6 +9,7 @@ import com.reactnativenavigation.options.Options;
 import com.reactnativenavigation.options.StackAnimationOptions;
 import com.reactnativenavigation.react.CommandListener;
 import com.reactnativenavigation.react.CommandListenerAdapter;
+import com.reactnativenavigation.react.events.ComponentType;
 import com.reactnativenavigation.react.events.EventEmitter;
 import com.reactnativenavigation.utils.CompatUtils;
 import com.reactnativenavigation.viewcontrollers.child.ChildControllersRegistry;
@@ -30,6 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RestrictTo;
 import androidx.annotation.Size;
 import androidx.annotation.VisibleForTesting;
@@ -52,7 +54,18 @@ public class StackController extends ParentController<StackLayout> {
     private final StackPresenter presenter;
     private final FabPresenter fabPresenter;
 
-    public StackController(Activity activity, List<ViewController> children, ChildControllersRegistry childRegistry, EventEmitter eventEmitter, TopBarController topBarController, StackAnimator animator, String id, Options initialOptions, BackButtonHelper backButtonHelper, StackPresenter stackPresenter, Presenter presenter, FabPresenter fabPresenter) {
+    public StackController(Activity activity,
+                           List<ViewController> children,
+                           ChildControllersRegistry childRegistry,
+                           EventEmitter eventEmitter,
+                           TopBarController topBarController,
+                           StackAnimator animator,
+                           String id,
+                           Options initialOptions,
+                           BackButtonHelper backButtonHelper,
+                           StackPresenter stackPresenter,
+                           Presenter presenter,
+                           FabPresenter fabPresenter) {
         super(activity, childRegistry, id, presenter, initialOptions);
         this.eventEmitter = eventEmitter;
         this.topBarController = topBarController;
@@ -385,6 +398,11 @@ public class StackController extends ParentController<StackLayout> {
         presenter.bindView(topBarController, getBottomTabsController());
         addInitialChild(stackLayout);
         return stackLayout;
+    }
+
+    @Override
+    public boolean canSendLifecycleEvents() {
+        return false;
     }
 
     private void addInitialChild(StackLayout stackLayout) {

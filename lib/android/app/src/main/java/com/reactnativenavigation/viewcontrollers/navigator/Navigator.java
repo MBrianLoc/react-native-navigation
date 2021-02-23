@@ -91,6 +91,11 @@ public class Navigator extends ParentController {
         return rootLayout;
     }
 
+    @Override
+    public boolean canSendLifecycleEvents() {
+        return false;
+    }
+
     @NonNull
     @Override
     public Collection<ViewController> getChildControllers() {

@@ -1,12 +1,11 @@
 package com.reactnativenavigation.viewcontrollers.stack.topbar.button
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.widget.Toolbar
-import com.reactnativenavigation.options.Options
 import com.reactnativenavigation.options.ButtonOptions
+import com.reactnativenavigation.options.Options
 import com.reactnativenavigation.options.params.Colour
 import com.reactnativenavigation.react.events.ComponentType
 import com.reactnativenavigation.viewcontrollers.viewcontroller.ViewController
@@ -34,14 +33,15 @@ open class ButtonController(activity: Activity,
     val buttonIntId: Int
         get() = button.intId
 
-    @SuppressLint("MissingSuperCall")
-    override fun onViewWillAppear() {
-        getView()!!.sendComponentStart(ComponentType.Button)
-    }
+    override fun getComponentId(): String? = button.component.componentId.get(null)
+    override fun getComponentType() = ComponentType.Button
+    override fun canSendLifecycleEvents() = true
 
-    @SuppressLint("MissingSuperCall")
-    override fun onViewDisappear() {
-        getView()!!.sendComponentStop(ComponentType.Button)
+
+    override fun onViewWillAppear() {
+        super.onViewWillAppear()
+        //TODO: check if this should be called like on view will appear in the base viewController
+        super.onViewDidAppear()
     }
 
     override fun isRendered(): Boolean {

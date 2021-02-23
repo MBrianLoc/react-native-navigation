@@ -3,6 +3,7 @@ package com.reactnativenavigation.viewcontrollers.component;
 import android.app.Activity;
 import android.view.View;
 
+import com.reactnativenavigation.react.events.ComponentType;
 import com.reactnativenavigation.viewcontrollers.viewcontroller.ScrollEventListener;
 import com.reactnativenavigation.options.Options;
 import com.reactnativenavigation.viewcontrollers.viewcontroller.Presenter;
@@ -14,6 +15,7 @@ import com.reactnativenavigation.viewcontrollers.viewcontroller.ViewController;
 import com.reactnativenavigation.views.component.ComponentLayout;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
@@ -23,8 +25,6 @@ public class ComponentViewController extends ChildController<ComponentLayout> {
     private final String componentName;
     private final ComponentPresenter presenter;
     private final ReactViewCreator viewCreator;
-    private enum VisibilityState { Appear, Disappear }
-    private VisibilityState lastVisibilityState = VisibilityState.Disappear;
 
     public ComponentViewController(final Activity activity,
                                    final ChildControllersRegistry childRegistry,
@@ -50,6 +50,22 @@ public class ComponentViewController extends ChildController<ComponentLayout> {
         return this.componentName;
     }
 
+    @Nullable
+    @Override
+    public String getComponentId() {
+        return getView().getComponentId();
+    }
+
+    @Override
+    public ComponentType getComponentType() {
+        return getView().getComponentType();
+    }
+
+    @Override
+    public boolean canSendLifecycleEvents() {
+        return true;
+    }
+
     @Override
     public void setDefaultOptions(Options defaultOptions) {
         super.setDefaultOptions(defaultOptions);
@@ -60,21 +76,7 @@ public class ComponentViewController extends ChildController<ComponentLayout> {
     public ScrollEventListener getScrollEventListener() {
         return perform(view, null, ComponentLayout::getScrollEventListener);
     }
-
-    @Override
-    public void onViewDidAppear() {
-        super.onViewDidAppear();
-        if (view != null && lastVisibilityState == VisibilityState.Disappear) view.sendComponentStart();
-        lastVisibilityState = VisibilityState.Appear;
-    }
-
-    @Override
-    public void onViewDisappear() {
-        lastVisibilityState = VisibilityState.Disappear;
-        if (view != null) view.sendComponentStop();
-        super.onViewDisappear();
-    }
-
+    
     @Override
     public void sendOnNavigationButtonPressed(String buttonId) {
         getView().sendOnNavigationButtonPressed(buttonId);

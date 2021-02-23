@@ -16,6 +16,7 @@ import com.reactnativenavigation.viewcontrollers.child.ChildControllersRegistry;
 import com.reactnativenavigation.views.BehaviourDelegate;
 import com.reactnativenavigation.views.ExternalComponentLayout;
 
+import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.FragmentActivity;
 
@@ -25,15 +26,13 @@ public class ExternalComponentViewController extends ChildController<ExternalCom
     private final ExternalComponent externalComponent;
     private final ExternalComponentCreator componentCreator;
     private ReactInstanceManager reactInstanceManager;
-    private final EventEmitter emitter;
     private final ExternalComponentPresenter presenter;
 
-    public ExternalComponentViewController(Activity activity, ChildControllersRegistry childRegistry, String id, Presenter presenter, ExternalComponent externalComponent, ExternalComponentCreator componentCreator, ReactInstanceManager reactInstanceManager, EventEmitter emitter, ExternalComponentPresenter externalComponentPresenter, Options initialOptions) {
+    public ExternalComponentViewController(Activity activity, ChildControllersRegistry childRegistry, String id, Presenter presenter, ExternalComponent externalComponent, ExternalComponentCreator componentCreator, ReactInstanceManager reactInstanceManager, ExternalComponentPresenter externalComponentPresenter, Options initialOptions) {
         super(activity, childRegistry, id, presenter, initialOptions);
         this.externalComponent = externalComponent;
         this.componentCreator = componentCreator;
         this.reactInstanceManager = reactInstanceManager;
-        this.emitter = emitter;
         this.presenter = externalComponentPresenter;
     }
 
@@ -49,19 +48,30 @@ public class ExternalComponentViewController extends ChildController<ExternalCom
 
     @Override
     public void sendOnNavigationButtonPressed(String buttonId) {
-        emitter.emitOnNavigationButtonPressed(getId(), buttonId);
+        EventEmitter.INSTANCE.emitOnNavigationButtonPressed(getId(), buttonId);
+    }
+
+    @Nullable
+    @Override
+    public String getComponentId() {
+        return getId();
+    }
+
+    @Override
+    public ComponentType getComponentType() {
+        return ComponentType.Component;
+    }
+
+    @Override
+    public boolean canSendLifecycleEvents() {
+        return true;
     }
 
     @Override
     public void onViewWillAppear() {
         super.onViewWillAppear();
-        emitter.emitComponentDidAppear(getId(), externalComponent.name.get(), ComponentType.Component);
-    }
-
-    @Override
-    public void onViewDisappear() {
-        super.onViewDisappear();
-        emitter.emitComponentDidDisappear(getId(), externalComponent.name.get(), ComponentType.Component);
+        //TODO why is it special ? why not being called on globalLayout
+        onViewDidAppear();
     }
 
     @Override

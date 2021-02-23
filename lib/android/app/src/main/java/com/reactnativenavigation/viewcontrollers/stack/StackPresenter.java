@@ -216,7 +216,7 @@ public class StackPresenter {
                 TopBarBackgroundViewController controller = new TopBarBackgroundViewController(activity, topBarBackgroundViewCreator);
                 controller.setWaitForRender(topBarOptions.background.waitForRender);
                 backgroundControllers.put(component, controller);
-                controller.setComponent(topBarOptions.background.component);
+                controller.component = topBarOptions.background.component;
                 controller.getView().setLayoutParams(new RelativeLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
                 topBar.setBackgroundComponent(controller.getView());
             }
@@ -237,8 +237,8 @@ public class StackPresenter {
     @Nullable
     private View findBackgroundComponent(ComponentOptions component) {
         for (TopBarBackgroundViewController controller : backgroundControllers.values()) {
-            if (ObjectUtils.equalsNotNull(controller.getComponent().name.get(null), component.name.get(null)) &&
-                    ObjectUtils.equalsNotNull(controller.getComponent().componentId.get(null), component.componentId.get(null))) {
+            if (controller.component != null && ObjectUtils.equalsNotNull(controller.component.name.get(null), component.name.get(null)) &&
+                    ObjectUtils.equalsNotNull(controller.component.componentId.get(null), component.componentId.get(null))) {
                 return controller.getView();
             }
         }
@@ -492,7 +492,7 @@ public class StackPresenter {
             } else {
                 TopBarBackgroundViewController controller = new TopBarBackgroundViewController(activity, topBarBackgroundViewCreator);
                 backgroundControllers.put(component, controller);
-                controller.setComponent(topBarOptions.background.component);
+                controller.component = topBarOptions.background.component;
                 controller.getView().setLayoutParams(new RelativeLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
                 topBar.setBackgroundComponent(controller.getView());
             }

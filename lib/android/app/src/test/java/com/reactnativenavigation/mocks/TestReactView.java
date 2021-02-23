@@ -25,16 +25,6 @@ public class TestReactView extends ReactView implements IReactView {
     }
 
     @Override
-    public void sendComponentStart(ComponentType type) {
-
-    }
-
-    @Override
-    public void sendComponentStop(ComponentType type) {
-
-    }
-
-    @Override
     public boolean isReady() {
         return false;
     }

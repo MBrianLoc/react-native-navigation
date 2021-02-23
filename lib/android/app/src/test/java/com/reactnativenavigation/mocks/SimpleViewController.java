@@ -69,6 +69,11 @@ public class SimpleViewController extends ChildController<SimpleViewController.S
         return null;
     }
 
+    @Override
+    public boolean canSendLifecycleEvents() {
+        return false;
+    }
+
     public static class SimpleView extends ReactView implements ReactComponent {
 
         public SimpleView(@NonNull Context context) {

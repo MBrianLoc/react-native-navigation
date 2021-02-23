@@ -51,6 +51,11 @@ public class TopTabsController extends ParentController<TopTabsViewPager> {
         return view;
     }
 
+    @Override
+    public boolean canSendLifecycleEvents() {
+        return false;
+    }
+
     @NonNull
     @Override
     public Collection<? extends ViewController> getChildControllers() {

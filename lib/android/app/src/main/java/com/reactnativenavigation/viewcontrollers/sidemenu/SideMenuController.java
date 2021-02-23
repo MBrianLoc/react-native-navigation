@@ -66,6 +66,11 @@ public class SideMenuController extends ParentController<SideMenuRoot> implement
     }
 
     @Override
+    public boolean canSendLifecycleEvents() {
+        return false;
+    }
+
+    @Override
     public void sendOnNavigationButtonPressed(String buttonId) {
         center.sendOnNavigationButtonPressed(buttonId);
     }

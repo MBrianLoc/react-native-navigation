@@ -6,10 +6,18 @@ import android.view.ViewGroup;
 import android.view.ViewManager;
 import android.view.ViewTreeObserver;
 
+import androidx.annotation.CallSuper;
+import androidx.annotation.CheckResult;
+import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
 import com.reactnativenavigation.options.Options;
 import com.reactnativenavigation.options.params.Bool;
 import com.reactnativenavigation.options.params.NullBool;
 import com.reactnativenavigation.react.CommandListener;
+import com.reactnativenavigation.react.events.ComponentType;
+import com.reactnativenavigation.react.events.EventEmitter;
 import com.reactnativenavigation.utils.Functions.Func1;
 import com.reactnativenavigation.utils.StringUtils;
 import com.reactnativenavigation.utils.UiThread;
@@ -24,14 +32,9 @@ import com.reactnativenavigation.views.component.Renderable;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.CallSuper;
-import androidx.annotation.CheckResult;
-import androidx.annotation.Nullable;
-import androidx.annotation.VisibleForTesting;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-
-import static com.reactnativenavigation.utils.CollectionUtils.*;
+import static com.reactnativenavigation.utils.CollectionUtils.forEach;
 import static com.reactnativenavigation.utils.ObjectUtils.perform;
+
 
 public abstract class ViewController<T extends ViewGroup> implements ViewTreeObserver.OnGlobalLayoutListener,
         ViewGroup.OnHierarchyChangeListener,
@@ -41,6 +44,10 @@ public abstract class ViewController<T extends ViewGroup> implements ViewTreeObs
     private boolean appearEventPosted;
     private boolean isFirstLayout = true;
     private Bool waitForRender = new NullBool();
+
+    protected enum VisibilityState {Appear, WillAppear, Disappear}
+
+    protected VisibilityState lastVisibilityState = VisibilityState.Disappear;
 
     public interface ViewVisibilityListener {
         /**
@@ -60,13 +67,14 @@ public abstract class ViewController<T extends ViewGroup> implements ViewTreeObs
     private final Activity activity;
     private final String id;
     private final YellowBoxDelegate yellowBoxDelegate;
-    @Nullable protected T view;
-    @Nullable private ParentController<? extends ViewGroup> parentController;
+    @Nullable
+    protected T view;
+    @Nullable
+    private ParentController<? extends ViewGroup> parentController;
     private boolean isShown;
     private boolean isDestroyed;
     private ViewVisibilityListener viewVisibilityListener = new ViewVisibilityListenerAdapter();
     private ViewControllerOverlay overlay;
-    @Nullable public abstract String getCurrentComponentName();
 
     public void setOverlay(ViewControllerOverlay overlay) {
         this.overlay = overlay;
@@ -106,6 +114,21 @@ public abstract class ViewController<T extends ViewGroup> implements ViewTreeObs
     }
 
     public abstract T createView();
+
+    @Nullable
+    public abstract String getCurrentComponentName();
+
+    @Nullable
+    public String getComponentId() {
+        return null;
+    }
+
+    @Nullable
+    public ComponentType getComponentType() {
+        return null;
+    }
+
+    public abstract boolean canSendLifecycleEvents();
 
     public void setViewVisibilityListener(ViewVisibilityListener viewVisibilityListener) {
         this.viewVisibilityListener = viewVisibilityListener;
@@ -209,7 +232,9 @@ public abstract class ViewController<T extends ViewGroup> implements ViewTreeObs
 
     public void attachView(ViewGroup parent, int index) {
         if (view == null) return;
-        if (view.getParent() == null) parent.addView(view, index);
+        if (view.getParent() == null) {
+            parent.addView(view, index);
+        }
     }
 
     public String getId() {
@@ -236,6 +261,9 @@ public abstract class ViewController<T extends ViewGroup> implements ViewTreeObs
 
     @CallSuper
     public void onViewWillAppear() {
+        EventEmitter.INSTANCE.emitComponentAppearState(EventEmitter.ComponentWillAppear, this);
+        lastVisibilityState = VisibilityState.WillAppear;
+
         isShown = true;
         applyOptions(options);
         performOnParentController(parentController -> {
@@ -252,7 +280,8 @@ public abstract class ViewController<T extends ViewGroup> implements ViewTreeObs
     }
 
     public void onViewDidAppear() {
-
+        lastVisibilityState = VisibilityState.Appear;
+        EventEmitter.INSTANCE.emitComponentAppearState(EventEmitter.ComponentDidAppear, this);
     }
 
     public void onViewWillDisappear() {
@@ -261,6 +290,8 @@ public abstract class ViewController<T extends ViewGroup> implements ViewTreeObs
 
     @CallSuper
     public void onViewDisappear() {
+        lastVisibilityState = VisibilityState.Disappear;
+        EventEmitter.INSTANCE.emitComponentAppearState(EventEmitter.ComponentDidDisappear, this);
         isShown = false;
     }
 
@@ -326,16 +357,16 @@ public abstract class ViewController<T extends ViewGroup> implements ViewTreeObs
 
     public boolean isViewShown() {
         return !isDestroyed &&
-               view != null &&
-               view.isShown() &&
-               isRendered();
+                view != null &&
+                view.isShown() &&
+                isRendered();
     }
 
     public boolean isRendered() {
         return view != null && (
                 waitForRender.isFalseOrUndefined() ||
-                !(view instanceof Renderable) ||
-                ((Renderable) view).isRendered()
+                        !(view instanceof Renderable) ||
+                        ((Renderable) view).isRendered()
         );
     }
 

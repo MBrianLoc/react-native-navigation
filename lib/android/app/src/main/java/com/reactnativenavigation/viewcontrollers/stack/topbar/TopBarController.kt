@@ -34,7 +34,7 @@ open class TopBarController(private val animator: TopBarAnimator = TopBarAnimato
 
     fun getRightButton(index: Int): MenuItem = rightButtonsBar.getButton(index)
 
-    fun createView(context: Context, parent: StackLayout): TopBar {
+    open fun createView(context: Context, parent: StackLayout): TopBar {
         if (!::view.isInitialized) {
             view = createTopBar(context, parent)
             leftButtonsBar = view.leftButtonsBar
