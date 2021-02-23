@@ -176,7 +176,6 @@ public class LayoutFactory {
                 externalComponent,
                 externalComponentCreators.get(externalComponent.name.get()),
                 reactInstanceManager,
-                new EventEmitter(context),
                 new ExternalComponentPresenter(),
                 parse(context, typefaceManager, node.getOptions())
         );
